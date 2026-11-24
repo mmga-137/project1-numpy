@@ -1,0 +1,307 @@
+% ============================================================
+%  深圳大学实验报告模板（SZU Experiment Report Template）
+% This template can be modified according to the specific requirements of your experiment or project.
+% Produced by: Chao Fan and Kewei Ou, AI School of SZU
+% ============================================================
+
+\documentclass[a4paper,12pt]{article}
+
+% ----------------------------
+% 中文与字体支持
+% ----------------------------
+\usepackage{fontspec}    % 字体支持
+\usepackage{xeCJK}       % 中文字体支持
+% 优先使用模板原字体；本机未安装时使用 TeX 发行版自带的 Fandol 宋体。
+\IfFontExistsTF{Noto Serif CJK SC}{%
+    \setCJKmainfont{Noto Serif CJK SC}%
+}{%
+    \setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]%
+}
+
+% ----------------------------
+% 页面设置与常用宏包
+% ----------------------------
+\usepackage{geometry}    % 页面边距控制
+\geometry{left=1in, right=1in, top=1in, bottom=1in}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{longtable}   % 支持长表格
+\usepackage{graphicx}    % 插入图片
+\usepackage{fancyhdr}    % 页眉页脚控制
+\usepackage{tikz}        % 绘制框线等图形
+\usetikzlibrary{calc}    % 坐标计算
+\usepackage{verbatim}    % 显示代码块
+\usepackage{float}       % 控制图片浮动位置（[H]参数）
+
+% ----------------------------
+% 页眉页脚设置
+% ----------------------------
+% \pagestyle{fancy}
+\fancyhf{} % 清空默认页眉页脚
+% \fancyhead[L]{深圳大学实验报告} % 左侧页眉文字
+\fancyhead[C]{} % 中间空
+\fancyhead[R]{} % 右侧空
+
+% ============================================================
+%                      文档开始
+% ============================================================
+
+\begin{document}
+
+% ============================================================
+% 封面页
+% ============================================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\textbf{深 \ 圳 \ 大 \ 学 \ 实 \ 验 \ 报 \ 告}\par}
+    \vspace{1.5cm}
+
+    % 统一标签宽度、列间距与填写区宽度，使所有行的左右边界对齐。
+    % \strut 保证不同内容的下划线与文字基线一致。
+    \newcommand{\coverlabel}[1]{\makebox[3.2cm][s]{\textbf{#1}}}
+    \newcommand{\covervalue}[1]{\underline{\makebox[8cm][c]{\strut #1}}}
+    {\Large
+    \begin{tabular}{@{}l@{\hspace{0.4cm}}l@{}}
+        \coverlabel{课\hfill 程\hfill 名\hfill 称} &
+        \covervalue{Python程序设计} \\[0.5cm]
+        \coverlabel{项\hfill 目\hfill 名\hfill 称} &
+        \covervalue{小项目一} \\[0.5cm]
+        \coverlabel{学\hfill 院} &
+        \covervalue{人工智能学院} \\[0.5cm]
+        \coverlabel{专\hfill 业} &
+        \covervalue{人工智能（IEEE荣誉班）} \\[0.5cm]
+        \coverlabel{指\hfill 导\hfill 教\hfill 师} &
+        \covervalue{舒婷} \\[0.5cm]
+        \coverlabel{报\hfill 告\hfill 人} &
+        \makebox[8cm][l]{%
+            \underline{\makebox[3cm][c]{\strut 胡楷}}%
+            \hspace{0.4cm}%
+            \makebox[1.2cm][c]{\textbf{学号}}%
+            \underline{\makebox[3.4cm][c]{\strut 2025681097}}%
+        } \\[0.5cm]
+        \coverlabel{实\hfill 验\hfill 时\hfill 间} &
+        \covervalue{2026/11/18} \\[0.5cm]
+        \coverlabel{提\hfill 交\hfill 时\hfill 间} &
+        \covervalue{2026/11/22}
+    \end{tabular}\par
+    }
+
+    \vfill
+    {\Large\textbf{教务处制}\par}
+\end{titlepage}
+
+\newpage
+
+% ============================================================
+
+% 正文部分：依据实际实现和验证日志撰写。
+% GitHub 地址已填入；封面信息按报告人此前要求保留。
+\setlength{\parindent}{2em}
+\setlength{\parskip}{3pt}
+
+\section{实验目标}
+本实验使用 NumPy 实现课程给定 OpenCLIP ViT-B-32 图像编码器的前向计算。
+输入为预处理后的 float32 数组 $[B,3,224,224]$，输出为 $[B,512]$ 的单位特征向量，
+其中 $B$ 为图片数量。模型采用固定的学习参数，验证目标是与教师参考输出在指定误差内一致。
+
+\noindent\textbf{代码仓库：}\texttt{https://github.com/mmga-137/project1-numpy}
+
+\section{实验方案与数据}
+课程附件包含 152 个视觉参数张量、十张图片及各阶段参考数组。
+图像预处理沿用附件实现：双三次缩放最短边至 224、中心裁剪、转为 RGB、调整为 CHW，
+再按给定通道均值与标准差归一化。参数完整性、图像顺序和数据指纹由教师检查脚本验证。
+
+完整流程为：图像切块、块投影、拼接 CLS 与位置编码、前置 LayerNorm、12 个 Transformer 块，
+最后选择 CLS，经后置 LayerNorm、输出投影和 L2 单位化得到特征。
+模型内部宽度为 768，注意力头数为 12，MLP 中间维度为 3072。
+
+\section{实现细节}
+\subsection{图片切块与 token 构造}
+224 除以块边长 32 得到每边 7 块，共 49 块。每块按 C、H、W 顺序展开，长度为
+$3\times32\times32=3072$。为保留正确元素次序，先拆开网格轴与块内轴，再进行轴置换：
+\[
+\begin{aligned}
+[B,3,224,224]&\longrightarrow[B,3,7,32,7,32]\\
+&\longrightarrow[B,7,7,3,32,32]\\
+&\longrightarrow[B,49,3072].
+\end{aligned}
+\]
+其中置换顺序为 \texttt{(0,2,4,1,3,5)}。网格按从左到右、再从上到下扫描。
+仅做最终形状的 reshape 无法表达上述分组顺序。
+
+块投影采用 $E=P W_p^\mathsf{T}$，没有偏置，将每块变成 768 维。
+把学习得到的 CLS 向量复制到每张图片，并在 token 轴最前端拼接，得到 $[B,50,768]$。
+位置参数为 $[50,768]$，利用广播对每张图片加上相同的位置编码。
+CLS 是用于汇总整张图片信息的特征行，图片之间的 batch 轴始终保留。
+
+\clearpage
+\subsection{多头注意力}
+首先使用固定权重计算 $Q,K,V$。普通线性权重按 $[\mathrm{out},\mathrm{in}]$ 存储，
+因此实现使用输入乘权重转置，再加偏置。每个 token 的 768 维特征拆为 12 组，每组 64 维：
+\[
+[B,N,768]\longrightarrow[B,N,12,64]\longrightarrow[B,12,N,64].
+\]
+最后两个维度用于矩阵乘法，batch 与 head 维度分别独立。
+单个注意力头的计算为
+\[
+S=\frac{QK^\mathsf{T}}{\sqrt{64}},\qquad
+A=\operatorname{softmax}(S),\qquad C=AV.
+\]
+其中 $S$ 和 $A$ 的形状为 $[B,12,N,N]$。对四维 K 使用
+\texttt{swapaxes(-1,-2)}，只交换最后两个轴。
+系数转换直接调用课程提供的数值稳定辅助函数。
+
+各头输出先从 $[B,12,N,64]$ 调整为 $[B,N,12,64]$，再合并为 $[B,N,768]$，
+经输出投影得到注意力更新。图像使用 \texttt{causal=False}；原接口保留 causal 开关，
+便于后续文本塔复用，并使用合成参数检查了该分支。
+
+\subsection{Transformer 残差与最终输出}
+每个块采用前置 LayerNorm，包含两条残差路径：
+\[
+\begin{aligned}
+R &= X + \operatorname{Attention}(\operatorname{LN}_1(X)),\\
+U &= \operatorname{LN}_2(R),\\
+M &= \operatorname{GELU}(UW_1^\mathsf{T}+b_1)W_2^\mathsf{T}+b_2,\\
+Y &= R+M.
+\end{aligned}
+\]
+MLP 将特征从 768 维扩展为 3072 维，再投影回 768 维。
+LayerNorm 的 epsilon 为 $10^{-5}$，GELU 使用课程给定的精确 erf 版本。
+第一条残差加回原输入 $X$，第二条加回 $R$，保持输出形状不变。
+12 个块逐层使用各自参数。
+
+末端取 \texttt{tokens[:,0,:]} 获得 CLS，执行 post-Norm，乘 $[768,512]$ 的输出投影矩阵。
+该投影已经按 $[\mathrm{in},\mathrm{out}]$ 存储，直接相乘。
+最后按每行 L2 长度缩放，使每张图片输出一个 512 维单位向量。
+
+\section{可复现环境与步骤}
+本次验证环境为 Windows 11、Python 3.13.12、NumPy 2.4.2 和 Pillow 12.1.1。
+完整时间记录见 \texttt{results/environment.json}（2026/11/24，UTC+8）。
+封面日期沿用报告人指定值，运行证据使用实际验证时间。
+从课程附件恢复整个 \texttt{weights/} 与 \texttt{assets/} 后，在仓库根目录执行：
+\begin{verbatim}
+python -m pip install -r requirements.txt
+python check.py --stage all
+python run.py --output output_tokens.npz
+python -m unittest discover -s tests -v
+\end{verbatim}
+数据和参数不重复上传，取得途径与放置结构写在仓库 README 中。
+
+\clearpage
+\section{实验结果}
+教师八个阶段全部通过。assets 阶段通过参数、图片与参考文件的完整性检查；
+其余阶段的实际误差如下，详细日志见 \texttt{results/check\_all.txt}。
+\begin{center}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+阶段 & 输出形状 & 最大绝对误差 & 平均绝对误差\\
+\midrule
+preprocess & $(10,3,224,224)$ & 0 & 0\\
+patches & $(2,49,3072)$ & 0 & 0\\
+tokens & $(2,50,768)$ & $4.387\times10^{-5}$ & $1.335\times10^{-6}$\\
+block0 & $(2,50,768)$ & $7.147\times10^{-6}$ & $3.348\times10^{-7}$\\
+last\_tokens & $(2,50,768)$ & $4.196\times10^{-5}$ & $2.633\times10^{-6}$\\
+output & $(10,512)$ & $5.662\times10^{-7}$ & $8.688\times10^{-8}$\\
+batch & $(3,512)$ & $4.061\times10^{-7}$ & $7.848\times10^{-8}$\\
+\bottomrule
+\end{tabular}
+\end{center}
+检查逐元素使用 $|a-r|\leq\mathrm{atol}+\mathrm{rtol}|r|$，输出阶段的
+$\mathrm{atol}=2\times10^{-5}$、$\mathrm{rtol}=2\times10^{-4}$。
+内部阶段允许的误差更大，不能把最终阈值直接套用于全部中间结果。
+
+十张图片输出为有限 float32 数组 $(10,512)$，每行 L2 长度介于
+$0.99999988$ 与 $1.00000000$ 之间。batch 阶段检验顺序 $[1,0,1]$，覆盖换序和重复图片。
+三个额外测试均通过，覆盖非连续内存的切块、特征分头和与独立逐头循环的注意力比较。
+
+\section{分析与反思}
+\textbf{切块顺序排错。}
+为验证形状正确是否足够，专门以递增编号像素构造错误的直接 reshape 版本。
+逐块切片作为独立期望值时，错误版本有 150464 个元素位置不同；
+改用正式实现的轴拆分与置换后，不同元素为 0。
+第一块前 32 个数之后应出现 224，而错误版本出现 32，显示其跨越了错误的行边界。
+这是显式构造的诊断实验，脚本与输出分别见
+\texttt{docs/debug\_patch\_order.py} 和 \texttt{results/patch\_order\_debug.txt}。
+
+\textbf{适用范围与改进。}
+当前验证支持给定参数下的数值复现，不直接证明分类或检索准确率。
+十张参考图片的规模有限；实际应用可增加独立图像、检索指标和不同 batch 大小的测试。
+当前 GELU 沿用课程的逐元素 erf 循环，更大批量时可研究等价向量化实现，
+但需重新验证精度和依赖。固定图像尺寸、模型宽度与层数由给定参数决定，
+修改配置数字不能直接获得另一个模型。
+
+\textbf{贡献与辅助使用。}
+教师提供原始框架、参数、图片、参考结果与数值辅助代码。
+胡楷提供任务要求、报告模板与封面信息。
+本次六组 TODO 实现、补充测试、验证、README 和报告初稿由 OpenAI Codex 辅助完成。
+提交者需本人核对并理解代码与报告，后续自主修改应按实际情况补充说明。
+本报告的数值均来自随仓库保存的实际运行日志。
+
+\newpage
+
+% ============================================================
+% 批阅与成绩评定页
+
+% ============================================================
+
+% 绘制正文外框（包含批阅区域）
+\begin{tikzpicture}[remember picture, overlay]
+  \draw[thick]
+    ($(current page.north west)+(2cm,-3cm)$)
+    rectangle
+    ($(current page.south east)+(-2cm,3.5cm)$);
+\end{tikzpicture}
+
+\vspace{1cm}
+
+% 批阅区
+\noindent \textbf{指导教师批阅意见：}
+\vspace{6cm}
+\hfill
+
+\vspace{1cm}
+
+\noindent \textbf{成绩评定：}
+\vspace{2cm}
+\hfill
+
+\vspace{1cm}
+
+\noindent
+\hfill
+\textbf{指导教师签字：}\quad\quad\quad\quad\quad\\[0.5cm]
+
+\hfill
+\textbf{年}\quad\quad
+\textbf{月}\quad\quad
+\textbf{日}\quad
+
+\vspace{1cm}
+
+% 备注部分
+\noindent \textbf{备注：}
+
+% 框外的注释
+\begin{tikzpicture}[remember picture, overlay]
+  \node[
+    anchor=north west,
+    inner sep=0pt,
+    text width=\dimexpr\paperwidth-4cm\relax
+  ] at ($(current page.south west)+(2cm,3.1cm)$) {
+    \begin{minipage}{\dimexpr\paperwidth-4cm\relax}
+      \small
+      \noindent
+      \textbf{注：}\;1、报告内的项目或内容设置，可根据实际情况加以调整和补充。\\[0.2cm]
+      \phantom{\textbf{注：}\;}2、教师批改学生实验报告时间应在学生提交实验报告时间后 10 日内。
+    \end{minipage}
+  };
+\end{tikzpicture}
+
+% ============================================================
+%                      文档结束
+% ============================================================
+
+\end{document}

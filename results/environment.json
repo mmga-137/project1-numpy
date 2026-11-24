@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-24T16:12:42+08:00",
+  "python": "3.13.12",
+  "numpy": "2.4.2",
+  "Pillow": "12.1.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "AMD64",
+  "check_command": "python check.py --stage all",
+  "check_seconds": 6.083,
+  "check_exit_code": 0
+}

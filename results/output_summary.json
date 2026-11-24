@@ -1,0 +1,22 @@
+{
+  "ids": [
+    "image_01",
+    "image_02",
+    "image_03",
+    "image_04",
+    "image_05",
+    "image_06",
+    "image_07",
+    "image_08",
+    "image_09",
+    "image_10"
+  ],
+  "shape": [
+    10,
+    512
+  ],
+  "dtype": "float32",
+  "all_finite": true,
+  "min_l2_norm": 0.9999998807907104,
+  "max_l2_norm": 1.0
+}

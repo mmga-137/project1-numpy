@@ -1,0 +1,23 @@
+# Course images, checkpoint and teacher reference: restore from the course package.
+/weights/
+/assets/
+
+# Generated arrays, Python caches and local environments.
+*.npz
+*.npy
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+Thumbs.db
+
+# LaTeX intermediates (the final PDF and TeX sources are kept).
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
