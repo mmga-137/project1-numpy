@@ -7,6 +7,24 @@ from image_encoder import ImageEncoder, MultiHeadAttention
 
 
 class EncoderArrayTests(unittest.TestCase):
+    def test_patchify_rejects_wrong_shape_even_with_same_pixel_count(self):
+        encoder = ImageEncoder.__new__(ImageEncoder)
+        for shape in ((1, 3, 112, 448), (1, 224, 224, 3), (3, 224, 224)):
+            with self.subTest(shape=shape):
+                with self.assertRaisesRegex(ValueError, r'\[B,3,224,224\]'):
+                    encoder.patchify(np.zeros(shape, dtype=np.float32))
+
+    def test_patchify_rejects_wrong_dtype(self):
+        encoder = ImageEncoder.__new__(ImageEncoder)
+        for dtype in (np.float64, np.uint8):
+            with self.subTest(dtype=dtype):
+                with self.assertRaisesRegex(TypeError, 'float32'):
+                    encoder.patchify(np.zeros((1, 3, 224, 224), dtype=dtype))
+
+    def test_patchify_rejects_non_array_input(self):
+        with self.assertRaisesRegex(TypeError, 'NumPy array'):
+            ImageEncoder.__new__(ImageEncoder).patchify([1, 2, 3])
+
     def test_patch_order_matches_explicit_image_slices(self):
         # A non-contiguous input also catches assumptions about memory layout.
         storage = np.arange(2 * 3 * 224 * 448, dtype=np.float32).reshape(2, 3, 224, 448)

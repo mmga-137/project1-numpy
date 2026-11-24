@@ -32,10 +32,13 @@ project1-numpy/
 ├── config.json               # 固定模型配置
 ├── requirements.txt          # 依赖范围
 ├── SOURCE-MANIFEST.json      # 原始课程附件来源与指纹记录
-├── tests/test_image_encoder.py
+├── tests/
+│   ├── test_image_encoder.py  # 不需要课程数据的单元测试
+│   └── verify_inference.py    # 新输入、单张/批量和独立命令行验证
 ├── docs/
 │   ├── COURSE_README.md      # 课程原始说明，供追溯
 │   ├── debug_patch_order.py  # 切块顺序错误的可复现实验
+│   ├── REVIEW.md             # 提交前复查发现与修复
 │   └── UPLOAD_GITHUB.md      # GitHub 上传步骤
 ├── results/                  # 实际运行日志、环境和输出摘要
 ├── report/                   # 报告 LaTeX 源码和 PDF 初稿
@@ -112,7 +115,15 @@ python -m unittest discover -s tests -v
 python docs/debug_patch_order.py
 ```
 
-补充检查使用合成数组，覆盖非连续内存输入的切块顺序、通用的多头拆分，以及与独立逐头循环实现的注意力比较（包括 causal 模式）。
+六个单元测试使用合成数组，覆盖输入形状和类型检查、非连续内存的切块顺序、通用的多头拆分，以及与独立逐头循环实现的注意力比较（包括 causal 模式）。编码器要求输入为 `[B,3,224,224]` 的 float32 NumPy 数组，形状不匹配时抛出 `ValueError`，类型不匹配时抛出 `TypeError`。传入图片路径时，`run.py` 会调用课程预处理生成合法输入。
+
+恢复课程权重后，还可执行独立推理验证：
+
+```powershell
+python tests/verify_inference.py --output results/extra_validation.json
+```
+
+该脚本使用新生成的输入检查单张和批量输出的一致性，并建立只含代码和权重的临时项目，不放入 `assets/`。它从其他工作目录调用命令行，处理新生成的 RGB、灰度图片，将结果与直接调用编码器的输出比较。详细检查记录保存在 `results/extra_validation.json`，不依赖教师参考数组。
 
 ## 本次运行结果
 
@@ -130,9 +141,11 @@ python docs/debug_patch_order.py
 
 `assets` 阶段通过 152 个视觉参数张量与十组图片/参考输出的完整性检查。检查逐元素使用 `abs(actual-reference) <= atol + rtol*abs(reference)`；最终输出的 `atol=2e-5, rtol=2e-4`。除误差外，还检查形状、float32、有限值和输出单位长度。
 
-`results/output_summary.json` 记录实际输出的形状与长度范围；`results/unit_tests.txt` 记录三个补充测试通过。教师参考输出仅在验证中读取，编码器和推理入口不依赖参考数组。
+`results/output_summary.json` 记录课程十张图片实际输出的形状与长度范围；`results/unit_tests.txt` 记录六个单元测试通过。新增验证中，单张与四张换序/重复 batch 的最大绝对差为 `1.490e-07`；没有 `assets/` 的独立项目完成两张新图推理，命令行与 API 输出的最大差为 `0`。这些额外检查验证批处理和资源独立性；模型数值准确性仍由教师参考检查判定。
 
 ## 形状变化与排错案例
+
+复查中发现一个真实问题：原实现只根据元素总数 reshape，会把 `(1,3,112,448)` 或 NHWC 格式的数组错误地解释为固定尺寸 CHW 图像，也会接受 float64 输入。现在切块前显式检查数组类型、四维形状和 float32 类型，并补充回归测试，避免把输入问题拖到后续矩阵计算或数值检查中。具体记录见 `docs/REVIEW.md`。
 
 切块分为三步：`[B,3,224,224] → [B,3,7,32,7,32] → [B,7,7,3,32,32] → [B,49,3072]`。直接 `reshape(B,49,3072)` 虽然形状相同，但会把整幅图的连续像素误当成一个方形图片块。
 

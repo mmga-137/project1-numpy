@@ -1,0 +1,50 @@
+{
+  "checked_at": "2026-11-24T16:45:22+08:00",
+  "single_vs_batch": {
+    "shape": [
+      4,
+      512
+    ],
+    "dtype": "float32",
+    "min_l2_norm": 0.9999999403953552,
+    "max_l2_norm": 1.0,
+    "input_seed": 137,
+    "order": [
+      1,
+      0,
+      1,
+      0
+    ],
+    "max_abs_single_vs_batch": 1.4901161193847656e-07
+  },
+  "standalone_cli": {
+    "shape": [
+      2,
+      512
+    ],
+    "dtype": "float32",
+    "min_l2_norm": 1.0,
+    "max_l2_norm": 1.0,
+    "ids": [
+      "rgb_pattern",
+      "grayscale_pattern"
+    ],
+    "input_modes": [
+      "RGB",
+      "L"
+    ],
+    "input_sizes": [
+      [
+        300,
+        180
+      ],
+      [
+        240,
+        120
+      ]
+    ],
+    "assets_present_in_standalone": false,
+    "working_directory_is_project_root": false,
+    "max_abs_cli_vs_api": 0.0
+  }
+}

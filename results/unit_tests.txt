@@ -1,8 +1,11 @@
 test_attention_matches_independent_head_loop (test_image_encoder.EncoderArrayTests.test_attention_matches_independent_head_loop) ... ok
 test_head_split_preserves_each_token_feature_group (test_image_encoder.EncoderArrayTests.test_head_split_preserves_each_token_feature_group) ... ok
 test_patch_order_matches_explicit_image_slices (test_image_encoder.EncoderArrayTests.test_patch_order_matches_explicit_image_slices) ... ok
+test_patchify_rejects_non_array_input (test_image_encoder.EncoderArrayTests.test_patchify_rejects_non_array_input) ... ok
+test_patchify_rejects_wrong_dtype (test_image_encoder.EncoderArrayTests.test_patchify_rejects_wrong_dtype) ... ok
+test_patchify_rejects_wrong_shape_even_with_same_pixel_count (test_image_encoder.EncoderArrayTests.test_patchify_rejects_wrong_shape_even_with_same_pixel_count) ... ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.136s
+Ran 6 tests in 0.141s
 
 OK

@@ -104,6 +104,12 @@ class ImageEncoder:
         """
         # TODO-01: separate patch-grid axes; reorder; flatten.
         # Input [B,3,224,224], return [B,49,3072].
+        if not isinstance(images, np.ndarray):
+            raise TypeError('images must be a NumPy array with dtype float32')
+        if images.ndim != 4 or images.shape[1:] != (3, 224, 224):
+            raise ValueError('images must have shape [B,3,224,224]')
+        if images.dtype != np.float32:
+            raise TypeError('images must have dtype float32; use the supplied preprocessing')
         batch = images.shape[0]
         # [B,C,grid_h,patch_h,grid_w,patch_w] -> [B,grid_h,grid_w,C,patch_h,patch_w].
         grid = images.reshape(batch, 3, 7, 32, 7, 32)
