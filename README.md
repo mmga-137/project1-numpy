@@ -2,6 +2,8 @@
 
 GitHub 仓库：https://github.com/mmga-137/project1-numpy
 
+直接查看：[实验报告 PDF](report/report.pdf) · [LaTeX 源码](report/main.tex) · [教师检查日志](results/check_all.txt) · [教师数值对照](results/reference_comparison.json) · [仓库检查记录](docs/REPOSITORY_AUDIT.md)
+
 Python 程序设计课程作业，报告人：胡楷。使用课程提供的 OpenCLIP ViT-B-32 图像参数，以 NumPy 完成前向计算，将每张图片转换为长度为 512 的单位特征向量。无需训练、GPU、PyTorch 或 OpenCLIP 软件包。
 
 ## 功能与实现
@@ -40,6 +42,8 @@ project1-numpy/
 │   ├── COURSE_README.md      # 课程原始说明，供追溯
 │   ├── debug_patch_order.py  # 切块顺序错误的可复现实验
 │   ├── REVIEW.md             # 提交前复查发现与修复
+│   ├── REPORT_REVISION.md    # 报告修订与数值核对记录
+│   ├── REPOSITORY_AUDIT.md   # GitHub 仓库与干净副本复现检查
 │   └── UPLOAD_GITHUB.md      # GitHub 上传步骤
 ├── results/                  # 实际运行日志、环境和输出摘要
 ├── report/                   # 报告 LaTeX 源码和 PDF
