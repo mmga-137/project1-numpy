@@ -41,7 +41,7 @@ project1-numpy/
 │   ├── REVIEW.md             # 提交前复查发现与修复
 │   └── UPLOAD_GITHUB.md      # GitHub 上传步骤
 ├── results/                  # 实际运行日志、环境和输出摘要
-├── report/                   # 报告 LaTeX 源码和 PDF 初稿
+├── report/                   # 报告 LaTeX 源码和 PDF
 ├── weights/                  # 从课程附件恢复；不上传
 └── assets/                   # 从课程附件恢复；不上传
 ```
@@ -155,7 +155,7 @@ python tests/verify_inference.py --output results/extra_validation.json
 
 ## 报告与辅助使用说明
 
-`report/main.tex` 和 `report/report.pdf` 是依据代码与实际日志整理的报告初稿。封面沿用报告人此前指定的信息和日期；验证记录的实际时间以 `results/environment.json` 为准。使用 XeLaTeX 编译 `report/main.tex`。报告中已填写仓库地址；提交前请本人阅读并核对报告内容和封面日期。
+`report/main.tex` 和 `report/report.pdf` 是依据代码、实际日志与学习讨论整理的实验报告，正文 5 页，另含封面和批阅页，总计 7 页。封面沿用报告人此前指定的信息和日期；验证记录的实际时间以 `results/environment.json` 为准。使用 XeLaTeX 编译 `report/main.tex`。报告中已填写仓库地址；提交前请本人阅读并核对报告内容和封面日期。
 
 课程教师提供任务框架、固定参数、样例图片、数值参考、辅助函数、运行与检查脚本。胡楷的参与包括：
 
