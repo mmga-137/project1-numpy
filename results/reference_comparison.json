@@ -1,0 +1,157 @@
+{
+  "checked_at": "2026-11-25T13:51:41+08:00",
+  "criterion": "abs(actual-reference) <= atol + rtol*abs(reference)",
+  "assets_integrity_passed": true,
+  "stages": {
+    "preprocess": {
+      "shape": [
+        10,
+        3,
+        224,
+        224
+      ],
+      "atol": 2e-06,
+      "rtol": 0.0002,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_error_to_tolerance_ratio": 0.0,
+      "elements_compared": 1505280,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    },
+    "patches": {
+      "shape": [
+        2,
+        49,
+        3072
+      ],
+      "atol": 0.0002,
+      "rtol": 0.0002,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_error_to_tolerance_ratio": 0.0,
+      "elements_compared": 301056,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    },
+    "tokens": {
+      "shape": [
+        2,
+        50,
+        768
+      ],
+      "atol": 0.0002,
+      "rtol": 0.0002,
+      "max_abs_error": 4.38690185546875e-05,
+      "mean_abs_error": 1.3345839552888114e-06,
+      "max_error_to_tolerance_ratio": 0.07690718695238061,
+      "elements_compared": 76800,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    },
+    "block0": {
+      "shape": [
+        2,
+        50,
+        768
+      ],
+      "atol": 0.0002,
+      "rtol": 0.0002,
+      "max_abs_error": 7.146969437599182e-06,
+      "mean_abs_error": 3.348231139928733e-07,
+      "max_error_to_tolerance_ratio": 0.03507299534020019,
+      "elements_compared": 76800,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    },
+    "last_tokens": {
+      "shape": [
+        2,
+        50,
+        768
+      ],
+      "atol": 0.0002,
+      "rtol": 0.0002,
+      "max_abs_error": 4.1961669921875e-05,
+      "mean_abs_error": 2.6331607538547057e-06,
+      "max_error_to_tolerance_ratio": 0.09476615254416308,
+      "elements_compared": 76800,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    },
+    "output": {
+      "shape": [
+        10,
+        512
+      ],
+      "atol": 2e-05,
+      "rtol": 0.0002,
+      "max_abs_error": 5.662441253662109e-07,
+      "mean_abs_error": 8.687910639793017e-08,
+      "max_error_to_tolerance_ratio": 0.02053005091280156,
+      "elements_compared": 5120,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    },
+    "batch": {
+      "shape": [
+        3,
+        512
+      ],
+      "atol": 2e-05,
+      "rtol": 0.0002,
+      "max_abs_error": 4.0605664253234863e-07,
+      "mean_abs_error": 7.848179942963422e-08,
+      "max_error_to_tolerance_ratio": 0.014541650399150457,
+      "elements_compared": 1536,
+      "elements_outside_tolerance": 0,
+      "passed": true
+    }
+  },
+  "output_samples": [
+    {
+      "selection": "first_value",
+      "image_id": "image_01",
+      "image_index_zero_based": 0,
+      "feature_index_zero_based": 0,
+      "actual": -0.03989820182323456,
+      "reference": -0.03989829123020172,
+      "absolute_error": 8.940696716308594e-08,
+      "allowed_error": 2.7979658246040348e-05,
+      "passed": true
+    },
+    {
+      "selection": "largest_absolute_error",
+      "image_id": "image_10",
+      "image_index_zero_based": 9,
+      "feature_index_zero_based": 152,
+      "actual": 0.11359964311122894,
+      "reference": 0.11360020935535431,
+      "absolute_error": 5.662441253662109e-07,
+      "allowed_error": 4.2720041871070865e-05,
+      "passed": true
+    },
+    {
+      "selection": "reference_closest_to_zero",
+      "image_id": "image_05",
+      "image_index_zero_based": 4,
+      "feature_index_zero_based": 0,
+      "actual": -7.131839538487839e-06,
+      "reference": -7.156493211368797e-06,
+      "absolute_error": 2.4653672880958766e-08,
+      "allowed_error": 2.0001431298642275e-05,
+      "passed": true
+    },
+    {
+      "selection": "last_value",
+      "image_id": "image_10",
+      "image_index_zero_based": 9,
+      "feature_index_zero_based": 511,
+      "actual": -0.0005897739320062101,
+      "reference": -0.0005897051305510104,
+      "absolute_error": 6.880145519971848e-08,
+      "allowed_error": 2.0117941026110202e-05,
+      "passed": true
+    }
+  ]
+}

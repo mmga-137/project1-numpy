@@ -1,0 +1,53 @@
+preprocess: max(error/tolerance)=0.000000 outside=0/1505280
+patches: max(error/tolerance)=0.000000 outside=0/301056
+tokens: max(error/tolerance)=0.076907 outside=0/76800
+block0: max(error/tolerance)=0.035073 outside=0/76800
+last_tokens: max(error/tolerance)=0.094766 outside=0/76800
+output: max(error/tolerance)=0.020530 outside=0/5120
+batch: max(error/tolerance)=0.014542 outside=0/1536
+[
+  {
+    "selection": "first_value",
+    "image_id": "image_01",
+    "image_index_zero_based": 0,
+    "feature_index_zero_based": 0,
+    "actual": -0.03989820182323456,
+    "reference": -0.03989829123020172,
+    "absolute_error": 8.940696716308594e-08,
+    "allowed_error": 2.7979658246040348e-05,
+    "passed": true
+  },
+  {
+    "selection": "largest_absolute_error",
+    "image_id": "image_10",
+    "image_index_zero_based": 9,
+    "feature_index_zero_based": 152,
+    "actual": 0.11359964311122894,
+    "reference": 0.11360020935535431,
+    "absolute_error": 5.662441253662109e-07,
+    "allowed_error": 4.2720041871070865e-05,
+    "passed": true
+  },
+  {
+    "selection": "reference_closest_to_zero",
+    "image_id": "image_05",
+    "image_index_zero_based": 4,
+    "feature_index_zero_based": 0,
+    "actual": -7.131839538487839e-06,
+    "reference": -7.156493211368797e-06,
+    "absolute_error": 2.4653672880958766e-08,
+    "allowed_error": 2.0001431298642275e-05,
+    "passed": true
+  },
+  {
+    "selection": "last_value",
+    "image_id": "image_10",
+    "image_index_zero_based": 9,
+    "feature_index_zero_based": 511,
+    "actual": -0.0005897739320062101,
+    "reference": -0.0005897051305510104,
+    "absolute_error": 6.880145519971848e-08,
+    "allowed_error": 2.0117941026110202e-05,
+    "passed": true
+  }
+]

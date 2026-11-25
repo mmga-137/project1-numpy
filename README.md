@@ -34,7 +34,8 @@ project1-numpy/
 ├── SOURCE-MANIFEST.json      # 原始课程附件来源与指纹记录
 ├── tests/
 │   ├── test_image_encoder.py  # 不需要课程数据的单元测试
-│   └── verify_inference.py    # 新输入、单张/批量和独立命令行验证
+│   ├── verify_inference.py    # 新输入、单张/批量和独立命令行验证
+│   └── compare_reference.py   # 与教师逐元素比较并导出报告用的对照值
 ├── docs/
 │   ├── COURSE_README.md      # 课程原始说明，供追溯
 │   ├── debug_patch_order.py  # 切块顺序错误的可复现实验
@@ -125,6 +126,14 @@ python tests/verify_inference.py --output results/extra_validation.json
 
 该脚本使用新生成的输入检查单张和批量输出的一致性，并建立只含代码和权重的临时项目，不放入 `assets/`。它从其他工作目录调用命令行，处理新生成的 RGB、灰度图片，将结果与直接调用编码器的输出比较。详细检查记录保存在 `results/extra_validation.json`，不依赖教师参考数组。
 
+恢复完整课程资源后，可导出逐阶段容差及本程序与教师的具体数值对照：
+
+```powershell
+python tests/compare_reference.py --output results/reference_comparison.json
+```
+
+其中每个元素的允许误差为 `atol + rtol * abs(reference)`；误差与允许值之比不超过 1 才算符合要求。`results/reference_comparison.json` 保存各阶段的最大比值及四个输出位置的实际值、教师参考值、绝对误差和允许误差。位置选择包括首值、最大绝对误差处、参考值最接近零处及末值；特征下标从 0 开始。
+
 ## 本次运行结果
 
 教师八个阶段全部通过，原始输出保存在 `results/check_all.txt`：
@@ -143,6 +152,8 @@ python tests/verify_inference.py --output results/extra_validation.json
 
 `results/output_summary.json` 记录课程十张图片实际输出的形状与长度范围；`results/unit_tests.txt` 记录六个单元测试通过。新增验证中，单张与四张换序/重复 batch 的最大绝对差为 `1.490e-07`；没有 `assets/` 的独立项目完成两张新图推理，命令行与 API 输出的最大差为 `0`。这些额外检查验证批处理和资源独立性；模型数值准确性仍由教师参考检查判定。
 
+逐元素对照还确认：最终 5120 个特征值均未超出允许范围，最大误差/允许误差比约为 `0.02053`。最大绝对误差在 `image_10` 的下标 `152`：本程序输出 `0.11359964311122894`，教师参考 `0.11360020935535431`，绝对误差约 `5.662e-07`，小于该元素允许的 `4.272e-05`。最大绝对误差位置与最大比值位置不一定相同。
+
 ## 形状变化与排错案例
 
 复查中发现一个真实问题：原实现只根据元素总数 reshape，会把 `(1,3,112,448)` 或 NHWC 格式的数组错误地解释为固定尺寸 CHW 图像，也会接受 float64 输入。现在切块前显式检查数组类型、四维形状和 float32 类型，并补充回归测试，避免把输入问题拖到后续矩阵计算或数值检查中。具体记录见 `docs/REVIEW.md`。
@@ -155,7 +166,7 @@ python tests/verify_inference.py --output results/extra_validation.json
 
 ## 报告与辅助使用说明
 
-`report/main.tex` 和 `report/report.pdf` 是依据代码、实际日志与学习讨论整理的实验报告，正文 5 页，另含封面和批阅页，总计 7 页。封面沿用报告人此前指定的信息和日期；验证记录的实际时间以 `results/environment.json` 为准。使用 XeLaTeX 编译 `report/main.tex`。报告中已填写仓库地址；提交前请本人阅读并核对报告内容和封面日期。
+`report/main.tex` 和 `report/report.pdf` 是依据代码、实际日志与学习讨论整理的实验报告，正文 5 页，另含封面和批阅页，总计 7 页。封面沿用报告人此前指定的信息和日期；各次验证的实际时间见 `results/` 中对应的环境和对照记录。使用 XeLaTeX 编译 `report/main.tex`。报告中已填写仓库地址；提交前请本人阅读并核对报告内容和封面日期。
 
 课程教师提供任务框架、固定参数、样例图片、数值参考、辅助函数、运行与检查脚本。胡楷的参与包括：
 
@@ -168,7 +179,7 @@ python tests/verify_inference.py --output results/extra_validation.json
 - 完成两次残差相加的数值示例推演，区分两条残差路径的相加对象。
 - 参与 MLP、GELU 与 LayerNorm 的概念分析，讨论特征维度变化、非线性加工和数值尺度控制的作用。
 
-辅助工具：OpenAI Codex。
+本项目使用 AI 辅助学习：围绕不理解的概念讨论，再通过切块、残差的小例子推演，将理解反馈给 AI 核对。代码实现、数值检查、报告整理和 GitHub 提交也有 AI 协助。辅助工具：OpenAI Codex。
 
 ## 上传 GitHub
 
