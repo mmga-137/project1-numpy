@@ -157,7 +157,7 @@ python tests/verify_inference.py --output results/extra_validation.json
 
 `report/main.tex` 和 `report/report.pdf` 是依据代码与实际日志整理的报告初稿。封面沿用报告人此前指定的信息和日期；验证记录的实际时间以 `results/environment.json` 为准。使用 XeLaTeX 编译 `report/main.tex`。报告中已填写仓库地址；提交前请本人阅读并核对报告内容和封面日期。
 
-课程教师提供任务框架、固定参数、样例图片、数值参考、辅助函数、运行与检查脚本。胡楷提供任务要求、报告模板和封面信息。辅助工具：OpenAI Codex。本人后续完成的修改按实际情况补充说明。
+课程教师提供任务框架、固定参数、样例图片、数值参考、辅助函数、运行与检查脚本。胡楷整理任务资料，提供报告模板及封面信息，并完成图像切块示例的推演与原理分析：通过 4×4 图像切分为 2×2 小块的示例，理解小块的空间位置、扫描顺序与块内展开顺序，区分直接 reshape 与正确切块的结果。辅助工具：OpenAI Codex。
 
 ## 上传 GitHub
 
